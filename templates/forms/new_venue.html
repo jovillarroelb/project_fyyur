@@ -3,7 +3,7 @@ block content %}
 <div class="form-wrapper">
  <form method="post" class="form">
   <h3 class="form-heading">
-   List a new venue
+   List a New Venue
    <a href="{{ url_for('index') }}" title="Back to homepage"
     ><i class="fa fa-home pull-right"></i
    ></a>
@@ -13,13 +13,14 @@ block content %}
    {{ form.name(class_ = 'form-control', autofocus = true) }}
   </div>
   <div class="form-group">
-   <label>City & State</label>
    <div class="form-inline">
     <div class="form-group">
+     <label for="city">City</label>
      {{ form.city(class_ = 'form-control', placeholder='City', autofocus = true)
      }}
     </div>
     <div class="form-group">
+     <label for="state">City</label>
      {{ form.state(class_ = 'form-control', placeholder='State', autofocus =
      true) }}
     </div>
@@ -35,30 +36,34 @@ block content %}
    = true) }}
   </div>
   <div class="form-group">
+   <label for="image_link">Image Link</label>
+   {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus
+   = true) }}
+  </div>
+  <div class="form-group">
+   <label for="website">Website</label>
+   {{ form.website(class_ = 'form-control', placeholder='http://',autofocus =
+   true) }}
+  </div>
+  <div class="form-group">
+   <label for="seeking_talent">Is Venue currently seeking talent?</label>
+   {{ form.seeking_talent(class_ = 'form-control', autofocus = true) }}
+  </div>
+  <div class="form-group">
+   <label for="seeking_description">Seeking Description</label>
+   {{ form.seeking_description(class_ = 'form-control',
+   placeholder='Description', autofocus = true) }}
+  </div>
+  <div class="form-group">
    <label for="genres">Genres</label>
    <small>Ctrl+Click to select multiple</small>
    {{ form.genres(class_ = 'form-control', placeholder='Genres', autofocus =
    true) }}
   </div>
   <div class="form-group">
-   <label for="genres">Facebook Link</label>
+   <label for="facebook_link">Facebook Link</label>
    {{ form.facebook_link(class_ = 'form-control', placeholder='http://',
    autofocus = true) }}
-  </div>
-  <div class="form-group">
-   <label for="genres">Website</label>
-   {{ form.website(class_ = 'form-control', placeholder='http://',autofocus =
-   true) }}
-  </div>
-  <div class="form-group">
-   <label for="genres">Image Link</label>
-   {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus
-   = true) }}
-  </div>
-  <div class="form-group">
-   <label for="genres">Seeking Description</label>
-   {{ form.seeking_description(class_ = 'form-control',
-   placeholder='Description', autofocus = true) }}
   </div>
   <input
    type="submit"
