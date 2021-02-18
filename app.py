@@ -21,6 +21,7 @@ from flask_wtf import Form
 import logging
 from logging import Formatter, FileHandler
 
+# Import other *.py files of the project
 from forms import *
 from models import db, Venue, Artist, Show
 
@@ -203,7 +204,7 @@ def create_venue_submission():
                 phone = form.phone.data,
                 image_link = form.image_link.data,
                 website = form.website.data,
-                seeking_talent = form.seeking_talent,
+                seeking_talent = form.seeking_talent.data,
                 seeking_description = form.seeking_description.data,
                 genres = form.genres.data,
                 facebook_link = form.facebook_link.data,            
@@ -233,32 +234,23 @@ def create_venue_submission():
 # 2.- Get Venue:
 @app.route('/venues')
 def venues():
-    venues = Venue.query.order_by(Venue.state, Venue.city).all()
-
-    data = []
-    tmp = {}
-    prev_city = None
-    prev_state = None
-    for venue in venues:
-        venue_data = {
-            'id': venue.id,
-            'name': venue.name,
-            'num_upcoming_shows': len(list(filter(lambda x: x.start_time > datetime.today(),
-                                                  venue.shows)))
-        }
-        if venue.city == prev_city and venue.state == prev_state:
-            tmp['venues'].append(venue_data)
-        else:
-            if prev_city is not None:
-                data.append(tmp)
-            tmp['city'] = venue.city
-            tmp['state'] = venue.state
-            tmp['venues'] = [venue_data]
-        prev_city = venue.city
-        prev_state = venue.state
-    data.append(tmp)
-
-    return render_template('pages/venues.html', areas=tmp)
+    locals = []
+    venues = Venue.query.all()
+    places = Venue.query.distinct(Venue.city, Venue.state).all()
+        
+    for place in places:
+        locals.append({
+            'city': place.city,
+            'state': place.state,
+            'venues': [{
+                'id': venue.id,
+                'name': venue.name,
+                'num_upcoming_shows': len([show for show in venue.shows if show.start_time > datetime.now()])
+            } for venue in venues if
+                venue.city == place.city and venue.state == place.state]
+        })
+    print(locals[0])
+    return render_template('pages/venues.html', areas=locals)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -304,6 +296,9 @@ def show_venue(venue_id):
 
     data = {
         'id': venue.id,
+        'name': venue.name,
+        'city': venue.city,
+        'state': venue.state,
         'past_shows': [{
             'artist_id': artist.id,
             "artist_name": artist.name,

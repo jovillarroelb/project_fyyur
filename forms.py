@@ -40,12 +40,10 @@ class VenueForm(Form):
         'website',
     )
     seeking_talent = BooleanField(
-        'seeking_talent', 
-        validators=[DataRequired()]
+        'seeking_talent',
     )    
     seeking_description = StringField(
         'seeking_description',
-        validators=[DataRequired()]
     )
     genres = SelectMultipleField(
         'genres', 
@@ -89,20 +87,16 @@ class ArtistForm(Form):
         validators=[DataRequired()]
     )
     website = StringField(
-        'website', 
-        validators=[DataRequired()]
+        'website',
     )    
     seeking_venue = BooleanField(
-        'seeking_venue', 
-        validators=[DataRequired()],
+        'seeking_venue',
         )
     seeking_description = StringField(
-        'seeking_description', 
-        validators=[DataRequired()]
+        'seeking_description',
     )
     image_link = StringField(
-        'image_link', 
-        validators=[DataRequired()]
+        'image_link',
     )
     genres = SelectMultipleField(
         'genres', 
@@ -110,8 +104,7 @@ class ArtistForm(Form):
         choices=Genre.choices()
     )
     facebook_link = StringField(
-        'facebook_link', 
-        validators=[URL()]
+        'facebook_link',
     )
 
     def validate(self):
