@@ -105,23 +105,53 @@ def artists():
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
-    # shows the artist page with the given venue_id
-    artist = Artist.query.get(artist_id)
 
-    past_shows = list(filter(lambda x: x.start_time <
-                             datetime.today(), artist.shows))  #Anoymouse function that filters past shows
-    upcoming_shows = list(filter(lambda x: x.start_time >=
-                                 datetime.today(), artist.shows))
+    artist = Artist.query.filter_by(id=artist_id).first_or_404()
 
-    past_shows = list(map(lambda x: x.show_venue(), past_shows))
-    upcoming_shows = list(map(lambda x: x.show_venue(), upcoming_shows))  #Anoymouse function that filters upcoming shows
+    past_shows = db.session.query(Venue, Show).join(Show).join(Artist).\
+    filter(
+        Show.venue_id == Venue.id,
+        Show.artist_id == artist_id,
+        Show.start_time < datetime.now()
+    ).\
+    all()
 
-    data = artist.to_dict()
-    print(data)
-    data['past_shows'] = past_shows
-    data['upcoming_shows'] = upcoming_shows
-    data['past_shows_count'] = len(past_shows)
-    data['upcoming_shows_count'] = len(upcoming_shows)
+    upcoming_shows = db.session.query(Venue, Show).join(Show).join(Artist).\
+    filter(
+        Show.venue_id == Venue.id,
+        Show.artist_id == artist_id,
+        Show.start_time > datetime.now()
+    ).\
+    all()
+
+    data = {
+        'id': artist.id,
+        'name': artist.name,
+        'city': artist.city,
+        'state': artist.state,
+        'phone': artist.phone,
+        'website': artist.website,
+        'image_link': artist.image_link,
+        'genres': artist.genres,
+        'facebook_link': artist.facebook_link,
+        'seeking_venue': artist.seeking_venue,
+        'seeking_description': artist.seeking_description,
+        'past_shows': [{
+            'venue_id': venue.id,
+            'venue_name': venue.name,
+            'venue_image_link': venue.image_link,
+            'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+        } for venue, show in past_shows],
+        'upcoming_shows': [{
+            'venue_id': venue.id,
+            'venue_name': venue.name,
+            'venue_image_link': venue.image_link,
+            'start_time': show.start_time.strftime("%m/%d/%Y, %H:%M")
+        } for venue, show in upcoming_shows],
+        'past_shows_count': len(past_shows),
+        'upcoming_shows_count': len(upcoming_shows)
+    }
+
     return render_template('pages/show_artist.html', artist=data)
 
 # 3.- Update Artist
@@ -299,6 +329,14 @@ def show_venue(venue_id):
         'name': venue.name,
         'city': venue.city,
         'state': venue.state,
+        'address': venue.address,
+        'phone': venue.phone,
+        'image_link': venue.image_link,
+        'website': venue.website,
+        'seeking_talent': venue.seeking_talent,
+        'seeking_description': venue.seeking_description,
+        'genres': venue.genres,
+        'facebook_link': venue.facebook_link,
         'past_shows': [{
             'artist_id': artist.id,
             "artist_name": artist.name,
@@ -315,25 +353,9 @@ def show_venue(venue_id):
         'upcoming_shows_count': len(upcoming_shows)
     }
 
+    print(venue.genres)
+
     return render_template('pages/show_venue.html', venue=data)
-
-    # artist = Venue.query.get(venue_id)
-    # 
-    # past_shows = list(filter(lambda x: x.start_time <
-    #                          datetime.today(), venue.shows))
-    # upcoming_shows = list(filter(lambda x: x.start_time >=
-    #                              datetime.today(), venue.shows))
-
-    # past_shows = list(map(lambda x: x.show_artist(), past_shows))
-    # upcoming_shows = list(map(lambda x: x.show_artist(), upcoming_shows))
-
-    # data = venue.to_dict()
-    # data['past_shows'] = past_shows
-    # data['upcoming_shows'] = upcoming_shows
-    # data['past_shows_count'] = len(past_shows)
-    # data['upcoming_shows_count'] = len(upcoming_shows)
-
-    # return render_template('pages/show_venue.html', venue=data)
 
 # 3.- Update Venue:
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
